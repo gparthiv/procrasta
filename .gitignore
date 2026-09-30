@@ -1,0 +1,25 @@
+# Python / Virtual Environments (Ignores .venv anywhere in subdirectories)
+.venv/
+venv/
+ENV/
+__pycache__/
+*.py[cod]
+
+# Node / JS
+node_modules/
+dist/
+build/
+.next/
+
+# Environment / Secrets
+.env
+.env.local
+*.pem
+
+# IDE / Editor Settings
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
