@@ -15,6 +15,9 @@ from qdrant_client.http.models import Distance, VectorParams
 from langchain_qdrant import QdrantVectorStore
 from pydantic import BaseModel, Field
 
+# from fastapi.middleware.cors import CORSMiddleware
+from config import valkey_client
+
 load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
 if not api_key:
@@ -23,6 +26,14 @@ if not api_key:
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 app = FastAPI(title="ProCrasto")
+
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 qdrant_client = QdrantClient(url="http://localhost:6333")
 COLLECTION_NAME = "study_notes"
@@ -247,6 +258,7 @@ import time
 
 import time
 
+
 @app.post("/chat")
 async def chat_endpoint(req: ChatRequest):
 
@@ -255,10 +267,7 @@ async def chat_endpoint(req: ChatRequest):
     # 1. Retrieval
     start = time.perf_counter()
 
-    search_results = vector_store.similarity_search(
-        req.query,
-        k=3
-    )
+    search_results = vector_store.similarity_search(req.query, k=3)
 
     retrieval_time = time.perf_counter() - start
 
@@ -276,9 +285,7 @@ async def chat_endpoint(req: ChatRequest):
             location = f"Page {x.metadata.get('page', '?')}"
 
         context_blocks.append(
-            f"Source: {source}\n"
-            f"Location: {location}\n"
-            f"{x.page_content}"
+            f"Source: {source}\n" f"Location: {location}\n" f"{x.page_content}"
         )
 
     context_str = "\n\n".join(context_blocks)
@@ -326,6 +333,11 @@ Question:
     print(f"TOTAL     : {total_time:.3f}s")
     print("-------------------\n")
 
-    return {
-        "answer": response.content
-    }
+    return {"answer": response.content}
+
+
+@app.get("/cache-test")
+def cache_test():
+    valkey_client.set("status", "running")
+    result = valkey_client.get("status")
+    return {"valkey_status": result}
