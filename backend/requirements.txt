@@ -12,3 +12,6 @@ qdrant-client
 pypdf
 python-pptx
 pillow
+
+redis
+rq
