@@ -64,4 +64,11 @@ Question:
     # 4. Generation
     response = llm.invoke(prompt)
 
-    return {"answer": response.content}
+    answer = response.content
+
+    if isinstance(answer, list):
+        answer = "".join(
+            block.get("text", "") for block in answer if isinstance(block, dict)
+        )
+
+    return {"answer": answer}
