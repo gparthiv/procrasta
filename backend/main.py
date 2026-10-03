@@ -1,13 +1,24 @@
 from fastapi import FastAPI
 from fastapi import HTTPException
 from rag.cleanup import delete_user_data
+from rag.resources import qdrant_client, COLLECTION_NAME
 from config import valkey_client
 from session import create_session
 from routes.chat import router as chat_router
 from routes.upload import router as upload_router
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="ProCrasto")
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(chat_router)
 app.include_router(upload_router)

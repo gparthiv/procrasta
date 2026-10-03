@@ -3,7 +3,6 @@ import time
 from config import valkey_client
 from rag.cleanup import delete_user_data
 
-
 SESSION_REGISTRY = "session_registry"
 
 
@@ -31,6 +30,4 @@ def cleanup_expired_sessions():
             user_id,
         )
 
-        print(
-            f"Cleaned up expired session: {user_id}"
-        )
+        print(f"Cleaned up expired session: {user_id}")
